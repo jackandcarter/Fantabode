@@ -11,6 +11,7 @@ namespace Fantabode.Services
     Group? Current { get; }
     bool ApplyGizmoToGroup { get; set; }
     Matrix4x4? PreviewPivotWorld { get; }
+    (Vector3 min, Vector3 max)? PreviewBounds { get; }
     ulong? SelectedId { get; }
     void SetPreviewPivotWorld(in Matrix4x4 m);
     void Preview();
@@ -30,6 +31,7 @@ namespace Fantabode.Services
     public Group? Current { get; private set; }
     public bool ApplyGizmoToGroup { get; set; }
     public Matrix4x4? PreviewPivotWorld { get; private set; }
+    public (Vector3 min, Vector3 max)? PreviewBounds { get; private set; }
     public ulong? SelectedId { get; private set; }
 
     private bool applying = false;
@@ -45,12 +47,18 @@ namespace Fantabode.Services
       var count = Current.ItemIds.Count;
       previewWorlds = new Matrix4x4[count];
       var ends = new Vector3[count];
+      var min = new Vector3(float.MaxValue);
+      var max = new Vector3(float.MinValue);
       for (int i = 0; i < count; i++)
       {
         var world = m * Current.LocalFromPivot[i];
         previewWorlds[i] = world;
-        ends[i] = world.Translation;
+        var p = world.Translation;
+        ends[i] = p;
+        min = Vector3.Min(min, p);
+        max = Vector3.Max(max, p);
       }
+      PreviewBounds = (min, max);
       Current.SetEndPositions(ends);
     }
 
@@ -85,6 +93,7 @@ namespace Fantabode.Services
       applying = false;
       queue.Clear();
       previewWorlds = null;
+      PreviewBounds = null;
       Chat.Print($"{Prefix} Group cleared.");
     }
 
@@ -103,6 +112,8 @@ namespace Fantabode.Services
         ends[i] = world.Translation;
       }
       Current.SetEndPositions(ends);
+      previewWorlds = null;
+      PreviewBounds = null;
 
       applying = true; applyIndex = 0; framesUntilNext = 0;
       Chat.Print($"{Prefix} Applying group to {queue.Count} item(s)...");
