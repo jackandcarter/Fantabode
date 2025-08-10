@@ -217,8 +217,10 @@ namespace Fantabode
 
     public unsafe void ShowFurnishingList(bool state)
     {
-            if (HousingGoods != null)
-                ;//HousingGoods->IsVisible = state;//same as above, this value is read only with dalamud 13
+      if (HousingGoods != null)
+      {
+        // HousingGoods->IsVisible = state; // TODO: re-enable when writable
+      }
     }
 
     public void ShowInventory(bool state) => InventoryVisible = state;
@@ -235,8 +237,11 @@ namespace Fantabode
         if (mgr != null && mgr->HasHousePermissions())
           SetPlaceAnywhere(false);
 
-                // Enable the housing goods menu again.
-                if (HousingGoods != null) ;// HousingGoods->IsVisible = true;//same as above, this value is read only with dalamud 13
+        // Enable the housing goods menu again.
+        if (HousingGoods != null)
+        {
+          // HousingGoods->IsVisible = true; // TODO: re-enable when writable
+        }
       }
       catch (Exception ex)
       {
