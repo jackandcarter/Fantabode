@@ -135,10 +135,17 @@ namespace Fantabode
     public SelectItemDelegate SelectItem = null!;
 
     public unsafe void SelectHousingItem(HousingItem* item)
-{
-  if (HousingStructure == null || item == null) return;
-  try { SelectItem((IntPtr)HousingStructure, (IntPtr)item); } catch { }
-}
+    {
+      if (HousingStructure == null || item == null) return;
+      try
+      {
+        SelectItem((IntPtr)HousingStructure, (IntPtr)item);
+      }
+      catch (Exception ex)
+      {
+        Plugin.Log.Error(ex, "Error while selecting housing item");
+      }
+    }
 
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
