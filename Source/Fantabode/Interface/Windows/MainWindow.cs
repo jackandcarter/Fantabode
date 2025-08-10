@@ -260,11 +260,15 @@ namespace Fantabode.Interface.Windows
               if (Plugin.TryGetYardObject(items[i].HousingRowId, out var yard)) { name = yard.Item.Value.Name.ToString(); icon = yard.Item.Value.Icon; }
               if (Plugin.TryGetFurnishing(items[i].HousingRowId, out var furn)) { name = furn.Item.Value.Name.ToString(); icon = furn.Item.Value.Icon; }
               if (icon != 0) { Plugin.DrawIcon(icon, new Vector2(18,18)); ImGui.SameLine(); }
-              ImGui.TextUnformatted(name == string.Empty ? $"(Row {items[i].HousingRowId})" : name);
+              var display = name == string.Empty ? $"(Row {items[i].HousingRowId})" : name;
+              if (_checked[itemId]) ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.4f, 1f, 0.4f, 1f));
+              var selected = Groups.SelectedId == itemId;
+              if (ImGui.Selectable(display, selected)) Groups.SelectGroupItem(itemId);
+              if (_checked[itemId]) ImGui.PopStyleColor();
 
               ImGui.TableNextColumn();
               var flag = _checked[itemId];
-              if (ImGui.Checkbox($"##sel{i}", ref flag)) _checked[itemId] = flag;
+              if (ImGui.Checkbox($"##sel{i}", ref flag)) { _checked[itemId] = flag; if (flag) Groups.SelectGroupItem(itemId); }
             }
             ImGui.EndTable();
           }

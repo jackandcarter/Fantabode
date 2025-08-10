@@ -11,10 +11,12 @@ namespace Fantabode.Services
     Group? Current { get; }
     bool ApplyGizmoToGroup { get; set; }
     Matrix4x4? PreviewPivotWorld { get; }
+    ulong? SelectedId { get; }
     void SetPreviewPivotWorld(in Matrix4x4 m);
     void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode);
     void Clear();
     void StartApply();
+    void SelectGroupItem(ulong id);
     void Update();
   }
 
@@ -27,6 +29,7 @@ namespace Fantabode.Services
     public Group? Current { get; private set; }
     public bool ApplyGizmoToGroup { get; set; }
     public Matrix4x4? PreviewPivotWorld { get; private set; }
+    public ulong? SelectedId { get; private set; }
 
     private bool applying = false;
     private int applyIndex = 0;
@@ -41,6 +44,7 @@ namespace Fantabode.Services
       { Current = null; PreviewPivotWorld = null; Chat.PrintError($"{Prefix} No items checked."); return; }
 
       var mats = itemIds.Select(ReadWorld).ToArray();
+      var startPositions = mats.Select(m => m.Translation).ToArray();
       var pivot = pivotMode switch
       {
         Group.PivotMode.FirstItem => mats[0],
@@ -52,7 +56,7 @@ namespace Fantabode.Services
       Matrix4x4.Invert(pivot, out var inv);
       var locals = mats.Select(w => inv * w).ToArray();
 
-      Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot);
+      Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot, startPositions);
       PreviewPivotWorld = pivot;
       Chat.Print($"{Prefix} Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
     }
@@ -61,6 +65,7 @@ namespace Fantabode.Services
     {
       Current = null;
       PreviewPivotWorld = null;
+      SelectedId = null;
       applying = false;
       queue.Clear();
       Chat.Print($"{Prefix} Group cleared.");
@@ -73,11 +78,24 @@ namespace Fantabode.Services
 
       queue.Clear();
       var pivot = PreviewPivotWorld.Value;
+      var ends = new Vector3[Current.ItemIds.Count];
       for (int i = 0; i < Current.ItemIds.Count; i++)
-        queue.Add((Current.ItemIds[i], pivot * Current.LocalFromPivot[i]));
+      {
+        var world = pivot * Current.LocalFromPivot[i];
+        queue.Add((Current.ItemIds[i], world));
+        ends[i] = world.Translation;
+      }
+      Current.SetEndPositions(ends);
 
       applying = true; applyIndex = 0; framesUntilNext = 0;
       Chat.Print($"{Prefix} Applying group to {queue.Count} item(s)...");
+    }
+
+    public void SelectGroupItem(ulong id)
+    {
+      SelectedId = id;
+      PreviewPivotWorld = ReadWorld(id);
+      unsafe { Memory.SelectHousingItem((HousingItem*)id); }
     }
 
     public void Update()

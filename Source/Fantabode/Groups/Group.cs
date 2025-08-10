@@ -12,14 +12,25 @@ namespace Fantabode.Groups
     public readonly IReadOnlyList<ulong> ItemIds; // (ulong)HousingItem* pointers
     public readonly IReadOnlyList<Matrix4x4> LocalFromPivot; // itemLocal = inv(pivotWorld) * itemWorld
     public readonly Matrix4x4 PivotWorld; // capture-time pivot
+    public readonly IReadOnlyList<Vector3> StartPositions;
+    public IReadOnlyList<Vector3>? EndPositions { get; private set; }
 
-    public Group(PivotMode pivot, IReadOnlyList<ulong> itemIds, IReadOnlyList<Matrix4x4> localFromPivot, in Matrix4x4 pivotWorld)
+    public Group(
+      PivotMode pivot,
+      IReadOnlyList<ulong> itemIds,
+      IReadOnlyList<Matrix4x4> localFromPivot,
+      in Matrix4x4 pivotWorld,
+      IReadOnlyList<Vector3> startPositions)
     {
       if (itemIds.Count != localFromPivot.Count) throw new ArgumentException("Mismatched lists");
       Pivot = pivot;
       ItemIds = itemIds;
       LocalFromPivot = localFromPivot;
       PivotWorld = pivotWorld;
+      StartPositions = startPositions;
     }
+
+    public void SetEndPositions(IReadOnlyList<Vector3> end)
+      => EndPositions = end;
   }
 }
