@@ -5,7 +5,7 @@ using Dalamud.Interface.Components;
 
 using Dalamud.Bindings.ImGui;
 
-namespace BDTHPlugin.Interface.Components
+namespace Fantabode.Interface.Components
 {
   public class ItemControls
   {
@@ -40,12 +40,12 @@ namespace BDTHPlugin.Interface.Components
       {
         ImGui.PushItemWidth(73f);
         {
-          DrawDragCoord("##bdth-xdrag", ref Memory.position.X);
-          DrawDragCoord("##bdth-ydrag", ref Memory.position.Y);
-          DrawDragCoord("##bdth-zdrag", ref Memory.position.Z);
+          DrawDragCoord("##fantabode-xdrag", ref Memory.position.X);
+          DrawDragCoord("##fantabode-ydrag", ref Memory.position.Y);
+          DrawDragCoord("##fantabode-zdrag", ref Memory.position.Z);
           ImGui.Text("position");
 
-          DrawDragRotate("##bdth-rydrag", ref Memory.rotation.Y);
+          DrawDragRotate("##fantabode-rydrag", ref Memory.rotation.Y);
           ImGui.Text("rotation");
         }
         ImGui.PopItemWidth();
@@ -86,10 +86,10 @@ namespace BDTHPlugin.Interface.Components
 
       ImGui.EndGroup();
 
-      DrawInputCoord("x coord##bdth-x", ref Memory.position.X, ref lockX);
-      DrawInputCoord("y coord##bdth-y", ref Memory.position.Y, ref lockY);
-      DrawInputCoord("z coord##bdth-z", ref Memory.position.Z, ref lockZ);
-      DrawInputRotate("ry degree##bdth-ry", ref Memory.rotation.Y);
+      DrawInputCoord("x coord##fantabode-x", ref Memory.position.X, ref lockX);
+      DrawInputCoord("y coord##fantabode-y", ref Memory.position.Y, ref lockY);
+      DrawInputCoord("z coord##fantabode-z", ref Memory.position.Z, ref lockZ);
+      DrawInputRotate("ry degree##fantabode-ry", ref Memory.rotation.Y);
     }
     
     private void HandleScrollInput(ref float f)

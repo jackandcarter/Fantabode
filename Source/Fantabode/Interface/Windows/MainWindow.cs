@@ -8,11 +8,11 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 
-using BDTHPlugin.Interface.Components;
-using BDTHPlugin.Services;
-using BDTHPlugin.Groups;
+using Fantabode.Interface.Components;
+using Fantabode.Services;
+using Fantabode.Groups;
 
-namespace BDTHPlugin.Interface.Windows
+namespace Fantabode.Interface.Windows
 {
   public class MainWindow : Window
   {
@@ -30,7 +30,7 @@ namespace BDTHPlugin.Interface.Windows
     public bool Reset;
 
     public MainWindow(Gizmo gizmo) : base(
-      "Burning Down the House##BDTH",
+      "Fantabode##Fantabode",
       ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize |
       ImGuiWindowFlags.AlwaysAutoResize
     )
@@ -49,7 +49,7 @@ namespace BDTHPlugin.Interface.Windows
 
     public unsafe override void Draw()
     {
-      if (ImGui.BeginTabBar("bdth-main"))
+      if (ImGui.BeginTabBar("fantabode-main"))
       {
         if (ImGui.BeginTabItem("Controls"))
         {
@@ -117,7 +117,7 @@ namespace BDTHPlugin.Interface.Windows
       else if (Memory.HousingStructure->ActiveItem == null || Memory.HousingStructure->Mode != HousingLayoutMode.Rotate)
       {
         DrawError("Select a housing item in Rotate mode");
-        ImGuiComponents.HelpMarker("Are you doing everything right? Try using the /bdth debug command and report this issue in Discord!");
+        ImGuiComponents.HelpMarker("Are you doing everything right? Try using the /fantabode debug command and report this issue in Discord!");
       }
       else
         ItemControls.Draw();
@@ -154,7 +154,7 @@ namespace BDTHPlugin.Interface.Windows
       }
 
       if (ImGui.Button("Open Furnishing List"))
-        Plugin.CommandManager.ProcessCommand("/bdth list");
+        Plugin.CommandManager.ProcessCommand("/fantabode list");
       DrawTooltip(
       [
         "Opens a furnishing list that you can use to sort by distance and click to select objects.",

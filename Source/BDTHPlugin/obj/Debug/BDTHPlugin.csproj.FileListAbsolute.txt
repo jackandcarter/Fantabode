@@ -1,9 +1,0 @@
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.csproj.AssemblyReference.cache
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.GeneratedMSBuildEditorConfig.editorconfig
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.AssemblyInfoInputs.cache
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.AssemblyInfo.cs
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.csproj.CoreCompileInputs.cache
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.sourcelink.json
-/Users/imac/BDTHPlugin/BDTHPlugin/bin/Debug/BDTHPlugin.deps.json
-/Users/imac/BDTHPlugin/BDTHPlugin/bin/Debug/BDTHPlugin.dll
-/Users/imac/BDTHPlugin/BDTHPlugin/obj/Debug/BDTHPlugin.dll

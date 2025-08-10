@@ -1,10 +1,10 @@
-namespace BDTHPlugin.Services
+namespace Fantabode.Services
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Numerics;
-  using BDTHPlugin.Groups;
+  using Fantabode.Groups;
 
   public interface IGroupService
   {
@@ -37,7 +37,7 @@ namespace BDTHPlugin.Services
     public void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode)
     {
       if (itemIds == null || itemIds.Count == 0)
-      { Current = null; PreviewPivotWorld = null; Chat.PrintError("[BDTH] No items checked."); return; }
+      { Current = null; PreviewPivotWorld = null; Chat.PrintError("[Fantabode] No items checked."); return; }
 
       var mats = itemIds.Select(ReadWorld).ToArray();
       var pivot = pivotMode switch
@@ -53,7 +53,7 @@ namespace BDTHPlugin.Services
 
       Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot);
       PreviewPivotWorld = pivot;
-      Chat.Print($"[BDTH] Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
+      Chat.Print($"[Fantabode] Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
     }
 
     public void Clear()
@@ -62,13 +62,13 @@ namespace BDTHPlugin.Services
       PreviewPivotWorld = null;
       applying = false;
       queue.Clear();
-      Chat.Print("[BDTH] Group cleared.");
+      Chat.Print("[Fantabode] Group cleared.");
     }
 
     public void StartApply()
     {
       if (Current is null || PreviewPivotWorld is null)
-      { Chat.PrintError("[BDTH] No group/preview to apply."); return; }
+      { Chat.PrintError("[Fantabode] No group/preview to apply."); return; }
 
       queue.Clear();
       var pivot = PreviewPivotWorld.Value;
@@ -76,7 +76,7 @@ namespace BDTHPlugin.Services
         queue.Add((Current.ItemIds[i], pivot * Current.LocalFromPivot[i]));
 
       applying = true; applyIndex = 0; framesUntilNext = 0;
-      Chat.Print($"[BDTH] Applying group to {queue.Count} item(s)...");
+      Chat.Print($"[Fantabode] Applying group to {queue.Count} item(s)...");
     }
 
     public void Update()
@@ -85,7 +85,7 @@ namespace BDTHPlugin.Services
       if (framesUntilNext > 0) { framesUntilNext--; return; }
 
       if (applyIndex >= queue.Count)
-      { applying = false; Chat.Print("[BDTH] Group apply complete."); return; }
+      { applying = false; Chat.Print("[Fantabode] Group apply complete."); return; }
 
       var (id, w) = queue[applyIndex];
       unsafe

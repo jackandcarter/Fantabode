@@ -13,15 +13,15 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 
-using BDTHPlugin.Interface;
-using BDTHPlugin.Services;
+using Fantabode.Interface;
+using Fantabode.Services;
 using Dalamud.Interface.Textures;
 
-namespace BDTHPlugin
+namespace Fantabode
 {
   public class Plugin : IDalamudPlugin
   {
-    private const string commandName = "/bdth";
+    private const string commandName = "/fantabode";
 
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] public static IDataManager Data { get; private set; } = null!;
@@ -57,7 +57,7 @@ namespace BDTHPlugin
 
       CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
       {
-        HelpMessage = "Opens the controls for Burning Down the House plugin."
+        HelpMessage = "Opens the controls for Fantabode plugin."
       });
 
       // Set the ImGui context 

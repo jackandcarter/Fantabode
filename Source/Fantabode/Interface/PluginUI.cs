@@ -1,11 +1,11 @@
-using BDTHPlugin.Interface.Windows;
+using Fantabode.Interface.Windows;
 using Dalamud.Interface.Windowing;
 
-namespace BDTHPlugin.Interface
+namespace Fantabode.Interface
 {
   public class PluginUI
   {
-    private readonly WindowSystem Windows = new("BDTH");
+    private readonly WindowSystem Windows = new("Fantabode");
     
     private readonly Gizmo Gizmo = new();
 

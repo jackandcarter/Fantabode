@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace BDTHPlugin
+namespace Fantabode
 {
   class Util
   {
