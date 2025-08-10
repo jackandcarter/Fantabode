@@ -5,7 +5,8 @@ namespace Fantabode.Interface
 {
   public class PluginUI
   {
-    private readonly WindowSystem Windows = new("Fantabode");
+    private const string WindowSystemId = "Fantabode";
+    private readonly WindowSystem Windows = new(WindowSystemId);
     
     private readonly Gizmo Gizmo = new();
 

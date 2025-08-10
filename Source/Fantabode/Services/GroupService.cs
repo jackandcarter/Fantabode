@@ -22,6 +22,7 @@ namespace Fantabode.Services
   {
     private static PluginMemory Memory => Plugin.GetMemory();
     private static Dalamud.Plugin.Services.IChatGui Chat => Plugin.Chat;
+    private const string Prefix = "[Fantabode]";
 
     public Group? Current { get; private set; }
     public bool ApplyGizmoToGroup { get; set; }
@@ -37,7 +38,7 @@ namespace Fantabode.Services
     public void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode)
     {
       if (itemIds == null || itemIds.Count == 0)
-      { Current = null; PreviewPivotWorld = null; Chat.PrintError("[Fantabode] No items checked."); return; }
+      { Current = null; PreviewPivotWorld = null; Chat.PrintError($"{Prefix} No items checked."); return; }
 
       var mats = itemIds.Select(ReadWorld).ToArray();
       var pivot = pivotMode switch
@@ -53,7 +54,7 @@ namespace Fantabode.Services
 
       Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot);
       PreviewPivotWorld = pivot;
-      Chat.Print($"[Fantabode] Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
+      Chat.Print($"{Prefix} Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
     }
 
     public void Clear()
@@ -62,13 +63,13 @@ namespace Fantabode.Services
       PreviewPivotWorld = null;
       applying = false;
       queue.Clear();
-      Chat.Print("[Fantabode] Group cleared.");
+      Chat.Print($"{Prefix} Group cleared.");
     }
 
     public void StartApply()
     {
       if (Current is null || PreviewPivotWorld is null)
-      { Chat.PrintError("[Fantabode] No group/preview to apply."); return; }
+      { Chat.PrintError($"{Prefix} No group/preview to apply."); return; }
 
       queue.Clear();
       var pivot = PreviewPivotWorld.Value;
@@ -76,7 +77,7 @@ namespace Fantabode.Services
         queue.Add((Current.ItemIds[i], pivot * Current.LocalFromPivot[i]));
 
       applying = true; applyIndex = 0; framesUntilNext = 0;
-      Chat.Print($"[Fantabode] Applying group to {queue.Count} item(s)...");
+      Chat.Print($"{Prefix} Applying group to {queue.Count} item(s)...");
     }
 
     public void Update()
@@ -85,7 +86,7 @@ namespace Fantabode.Services
       if (framesUntilNext > 0) { framesUntilNext--; return; }
 
       if (applyIndex >= queue.Count)
-      { applying = false; Chat.Print("[Fantabode] Group apply complete."); return; }
+      { applying = false; Chat.Print($"{Prefix} Group apply complete."); return; }
 
       var (id, w) = queue[applyIndex];
       unsafe
