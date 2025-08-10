@@ -12,6 +12,7 @@ using Fantabode.Interface.Components;
 using Fantabode.Services;
 using Fantabode.Groups;
 using HousingManager = FFXIVClientStructs.FFXIV.Client.Game.HousingManager;
+using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace Fantabode.Interface.Windows
 {
@@ -72,7 +73,24 @@ namespace Fantabode.Interface.Windows
 
       var mgr = HousingManager.Instance();
       if (mgr != null)
-        ImGui.Text($"Ward: {mgr->GetCurrentWard()}, Division: {mgr->GetCurrentDivision()}, Plot: {mgr->GetCurrentPlot()}, Room: {mgr->GetCurrentRoom()}");
+      {
+        var plot = mgr->GetCurrentPlot();
+        ImGui.Text($"Ward: {mgr->GetCurrentWard()}, Division: {mgr->GetCurrentDivision()}, Plot: {plot}, Room: {mgr->GetCurrentRoom()}");
+
+        if (ImGui.IsItemHovered() && plot > 0 && mgr->OutdoorTerritory != null)
+        {
+          var outdoor = mgr->OutdoorTerritory;
+          var index = plot - 1;
+          var detailPtr = (PlotDetail*)((byte*)outdoor + 0x96B8);
+          var detail = detailPtr[index];
+          ImGui.BeginTooltip();
+          ImGui.Text($"Owner: {detail.OwnerType}");
+          ImGui.Text($"Size: {detail.Size}");
+          var icon = outdoor->GetPlotIcon((byte)index);
+          Plugin.DrawIcon((ushort)icon, new Vector2(24, 24));
+          ImGui.EndTooltip();
+        }
+      }
       var hasPerms = mgr != null && mgr->HasHousePermissions();
       if (!hasPerms)
         DrawError("No housing permissions");
