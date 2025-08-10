@@ -129,6 +129,7 @@ namespace Fantabode.Interface
         m.M31 = cx*sy*cz + sx*sz; m.M32 = cx*sy*sz - sx*cz; m.M33 = cx*cy;
         m.Translation = translate;
         Groups.SetPreviewPivotWorld(m);
+        Groups.Preview();
         return;
       }
       Memory.WritePosition(translate);

@@ -13,6 +13,7 @@ namespace Fantabode.Services
     Matrix4x4? PreviewPivotWorld { get; }
     ulong? SelectedId { get; }
     void SetPreviewPivotWorld(in Matrix4x4 m);
+    void Preview();
     void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode);
     void Clear();
     void StartApply();
@@ -35,8 +36,23 @@ namespace Fantabode.Services
     private int applyIndex = 0;
     private int framesUntilNext = 0;
     private readonly List<(ulong id, Matrix4x4 world)> queue = new();
+    private Matrix4x4[]? previewWorlds;
 
-    public void SetPreviewPivotWorld(in Matrix4x4 m) => PreviewPivotWorld = m;
+    public void SetPreviewPivotWorld(in Matrix4x4 m)
+    {
+      PreviewPivotWorld = m;
+      if (Current is null) return;
+      var count = Current.ItemIds.Count;
+      previewWorlds = new Matrix4x4[count];
+      var ends = new Vector3[count];
+      for (int i = 0; i < count; i++)
+      {
+        var world = m * Current.LocalFromPivot[i];
+        previewWorlds[i] = world;
+        ends[i] = world.Translation;
+      }
+      Current.SetEndPositions(ends);
+    }
 
     public void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode)
     {
@@ -57,7 +73,7 @@ namespace Fantabode.Services
       var locals = mats.Select(w => inv * w).ToArray();
 
       Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot, startPositions);
-      PreviewPivotWorld = pivot;
+      SetPreviewPivotWorld(pivot);
       Chat.Print($"{Prefix} Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
     }
 
@@ -68,6 +84,7 @@ namespace Fantabode.Services
       SelectedId = null;
       applying = false;
       queue.Clear();
+      previewWorlds = null;
       Chat.Print($"{Prefix} Group cleared.");
     }
 
@@ -117,6 +134,27 @@ namespace Fantabode.Services
       }
       applyIndex++;
       framesUntilNext = 2; // small delay so the game accepts the change
+    }
+
+    public void Preview()
+    {
+      if (Current is null || previewWorlds is null)
+        return;
+      unsafe
+      {
+        var original = Memory.HousingStructure->ActiveItem;
+        for (int i = 0; i < Current.ItemIds.Count; i++)
+        {
+          var world = previewWorlds[i];
+          var item = (HousingItem*)Current.ItemIds[i];
+          Memory.SelectHousingItem(item);
+          FromMatrix(in world, out var p, out var r);
+          Memory.WritePosition(p);
+          Memory.WriteRotation(r);
+        }
+        if (original != null)
+          Memory.SelectHousingItem(original);
+      }
     }
 
     // -------- helpers --------
