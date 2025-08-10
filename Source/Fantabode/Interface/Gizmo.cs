@@ -25,6 +25,7 @@ namespace Fantabode.Interface
 
     private ImGuiIOPtr Io;
     private Vector2 Wp;
+    private readonly GroupPreviewOverlay previewOverlay = new();
 
     public void Draw()
     {
@@ -79,6 +80,7 @@ namespace Fantabode.Interface
       ImGuizmo.SetOrthographic(false);
 
       ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);
+      previewOverlay.Draw(view, proj, pos, size);
 
       ComposeMatrix();
 
