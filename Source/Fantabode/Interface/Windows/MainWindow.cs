@@ -11,6 +11,7 @@ using Dalamud.Bindings.ImGuizmo;
 using Fantabode.Interface.Components;
 using Fantabode.Services;
 using Fantabode.Groups;
+using HousingManager = FFXIVClientStructs.FFXIV.Client.Game.HousingManager;
 
 namespace Fantabode.Interface.Windows
 {
@@ -68,6 +69,14 @@ namespace Fantabode.Interface.Windows
     private unsafe void DrawControls()
     {
       ImGui.BeginGroup();
+
+      var mgr = HousingManager.Instance();
+      if (mgr != null)
+        ImGui.Text($"Ward: {mgr->GetCurrentWard()}, Division: {mgr->GetCurrentDivision()}, Plot: {mgr->GetCurrentPlot()}, Room: {mgr->GetCurrentRoom()}");
+      var hasPerms = mgr != null && mgr->HasHousePermissions();
+      if (!hasPerms)
+        DrawError("No housing permissions");
+      ImGui.BeginDisabled(!hasPerms);
 
       var placeAnywhere = Configuration.PlaceAnywhere;
       if (ImGui.Checkbox("Place Anywhere", ref placeAnywhere))
@@ -177,6 +186,7 @@ namespace Fantabode.Interface.Windows
         Configuration.AutoVisible = autoVisible;
         Configuration.Save();
       }
+      ImGui.EndDisabled();
     }
 
     private unsafe void DrawGroups()
