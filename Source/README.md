@@ -1,39 +1,38 @@
 # Fantabode
 
-## What is it?
-Fantabode is a Dalamud plugin for FFXIV which gives you more control over placing housing items.
+Fantabode is a Dalamud plugin for Final Fantasy XIV that lets you precisely move and place housing items. Nudge furnishings by exact coordinates, bypass normal placement limits and decorate with ease.
 
-## What do I need to run it?
-First, you must use the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher) to run your game. The Quick Launcher allows for custom plugins to be installed to add new functionality to the game. To install, you first need to have the Quick Launcher setup for your game, instructions can be found on the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher) page.
+## Installation
 
-## How do I install it?
-### **[Please visit this page on how to install my plugin via third party repository support.](https://github.com/LeonBlade/DalamudPlugins)**
+Fantabode requires the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher).
 
-### **ONLY ASK FOR HELP FOR THIS PLUGIN FROM ME OR ON MY DISCORD SERVER**
+1. Open Dalamud settings in the launcher.
+2. In the **Experimental** tab add `https://github.com/LeonBlade/DalamudPlugins` as a third‑party repository.
+3. Search for **Fantabode** in the plugin installer and click **Install**.
 
-## How do I use it?
-`/fantabode` brings up the window to move items around. You **MUST** be in rotate mode for it to work.
+Please ask for help only from me or on my Discord server.
 
-Enabling the "Place Anywhere" checkbox will remove restrictions on placing items down for most cases.
+## Usage
 
-Enabling the "Gizmo" checkbox will give you access to a movement tool in game to manipulate the selected object on all three axis.
+- `/fantabode` – open the main control window. Make sure rotate mode is active.
+- `/fantabode list` – display a sortable list of furnishings for interior layouts.
 
-Enabling the "Snap" checkbox will lock your gizmo movements to the interval defined in the "drag" box at the bottom.
+Within the window you can:
 
-Clicking on the image button will change the movement mode to world and local movement.
-
-Click and drag on the boxes to change their values based on the drag input, alternatively, use the + and - buttons on the other inputs to adjust by the drag value as well. You can also enter numbers in here if you like by typing them.
-
-`/fantabode list` opens a furnishing list used for indoors. Allows you to sort objects by distance to refine the list of items in item dense house.
+- Enable **Place Anywhere** to remove most placement restrictions.
+- Toggle **Gizmo** to manipulate the selected object with a three‑axis handle.
+- Use **Snap** along with the drag value to move in fixed increments.
+- Switch between world and local movement using the image button.
+- Drag value boxes or use the +/- buttons to fine‑tune coordinates.
 
 ## FAQ
-Please check out the [FAQ](https://github.com/LeonBlade/Fantabode/wiki/FAQ) page to see if your issue might be listed here.
 
-## Final message
-Thank you for using my tool, I'm very grateful to everyone who uses my tools and I enjoy seeing what people do with them. If you wish to support me, you can do so at any of the links below. You can also join at the Discord to ask questions or share your creations.
+If you run into issues, check the [FAQ](https://github.com/LeonBlade/Fantabode/wiki/FAQ) for common solutions.
 
-**Ko-Fi:** https://ko-fi.com/LeonBlade
+## Support
 
-**Patreon:** https://patreon.com/LeonBlade
+Thanks for using Fantabode! If you'd like to support development or join the community:
 
-**Discord:** https://discord.gg/H4sSAyb25r
+- **Ko‑Fi:** https://ko-fi.com/LeonBlade
+- **Patreon:** https://patreon.com/LeonBlade
+- **Discord:** https://discord.gg/H4sSAyb25r
