@@ -9,10 +9,9 @@
   "Tags": [
     "fantabode",
     "housing",
-    "float",
-    "place",
-    "glitch",
-    "furnishing",
+    "decorating",
+    "placement",
+    "gizmo",
     "LeonBlade"
   ],
   "DalamudApiLevel": 13,
@@ -20,7 +19,7 @@
   "LoadSync": false,
   "CanUnloadAsync": false,
   "LoadPriority": 0,
-  "IconUrl": "https://github.com/LeonBlade/Fantabode/raw/main/icon.png",
+  "IconUrl": "https://raw.githubusercontent.com/LeonBlade/Fantabode/main/icon.png",
   "Punchline": "House decorating made easy!",
   "AcceptsFeedback": true
 }
