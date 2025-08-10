@@ -47,19 +47,22 @@ namespace Fantabode.Services
       var count = Current.ItemIds.Count;
       previewWorlds = new Matrix4x4[count];
       var ends = new Vector3[count];
+      var endRots = new Vector3[count];
       var min = new Vector3(float.MaxValue);
       var max = new Vector3(float.MinValue);
       for (int i = 0; i < count; i++)
       {
         var world = m * Current.LocalFromPivot[i];
         previewWorlds[i] = world;
-        var p = world.Translation;
+        FromMatrix(in world, out var p, out var r);
         ends[i] = p;
+        endRots[i] = r;
         min = Vector3.Min(min, p);
         max = Vector3.Max(max, p);
       }
       PreviewBounds = (min, max);
       Current.SetEndPositions(ends);
+      Current.SetEndRotations(endRots);
     }
 
     public void CaptureFromSelection(IReadOnlyList<ulong> itemIds, Group.PivotMode pivotMode)
@@ -68,7 +71,14 @@ namespace Fantabode.Services
       { Current = null; PreviewPivotWorld = null; Chat.PrintError($"{Prefix} No items checked."); return; }
 
       var mats = itemIds.Select(ReadWorld).ToArray();
-      var startPositions = mats.Select(m => m.Translation).ToArray();
+      var startPositions = new Vector3[mats.Length];
+      var startRotations = new Vector3[mats.Length];
+      for (int i = 0; i < mats.Length; i++)
+      {
+        FromMatrix(in mats[i], out var p, out var r);
+        startPositions[i] = p;
+        startRotations[i] = r;
+      }
       var pivot = pivotMode switch
       {
         Group.PivotMode.FirstItem => mats[0],
@@ -80,7 +90,7 @@ namespace Fantabode.Services
       Matrix4x4.Invert(pivot, out var inv);
       var locals = mats.Select(w => inv * w).ToArray();
 
-      Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot, startPositions);
+      Current = new Group(pivotMode, itemIds.ToArray(), locals, pivot, startPositions, startRotations);
       SetPreviewPivotWorld(pivot);
       Chat.Print($"{Prefix} Group captured: {itemIds.Count} item(s). Pivot: {pivotMode}");
     }
@@ -104,14 +114,19 @@ namespace Fantabode.Services
 
       queue.Clear();
       var pivot = PreviewPivotWorld.Value;
-      var ends = new Vector3[Current.ItemIds.Count];
-      for (int i = 0; i < Current.ItemIds.Count; i++)
+      var count = Current.ItemIds.Count;
+      var ends = new Vector3[count];
+      var endRots = new Vector3[count];
+      for (int i = 0; i < count; i++)
       {
         var world = pivot * Current.LocalFromPivot[i];
         queue.Add((Current.ItemIds[i], world));
-        ends[i] = world.Translation;
+        FromMatrix(in world, out var p, out var r);
+        ends[i] = p;
+        endRots[i] = r;
       }
       Current.SetEndPositions(ends);
+      Current.SetEndRotations(endRots);
       previewWorlds = null;
       PreviewBounds = null;
 
