@@ -31,7 +31,7 @@ namespace Fantabode
   [StructLayout(LayoutKind.Explicit)]
   public unsafe struct HousingObjectManager
   {
-    [FieldOffset(0x8980)] public fixed ulong Objects[400];
+      [FieldOffset(0x8980)] public fixed ulong Objects[PluginMemory.MaxHousingObjects];
     [FieldOffset(0x96E8)] public HousingGameObject* IndoorActiveObject2;
     [FieldOffset(0x96F0)] public HousingGameObject* IndoorHoverObject;
     [FieldOffset(0x96F8)] public HousingGameObject* IndoorActiveObject;

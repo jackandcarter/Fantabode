@@ -18,6 +18,8 @@ namespace Fantabode
     private bool isHousingOpen = false;
     private int inventoryType = 0;
 
+    public const int MaxHousingObjects = 400;
+
     // Pointers to modify assembly to enable place anywhere.
     public IntPtr placeAnywhere;
     public IntPtr wallAnywhere;
@@ -221,7 +223,7 @@ namespace Fantabode
 
     public unsafe int GetHousingObjectSelectedIndex()
     {
-      for (var i = 0; i < 400; i++)
+        for (var i = 0; i < MaxHousingObjects; i++)
       {
         if (HousingModule->GetCurrentManager()->Objects[i] == 0)
           continue;
@@ -409,7 +411,7 @@ namespace Fantabode
       if (HousingModule == null || HousingModule->GetCurrentManager() == null || HousingModule->GetCurrentManager()->Objects == null)
         return false;
 
-      for (var i = 0; i < 400; i++)
+        for (var i = 0; i < MaxHousingObjects; i++)
       {
         var oPtr = HousingModule->GetCurrentManager()->Objects[i];
         if (oPtr == 0)
@@ -435,7 +437,7 @@ namespace Fantabode
 
       var tmpObjects = new List<(HousingGameObject gObj, float distance)>();
       objects = new List<HousingGameObject>();
-      for (var i = 0; i < 400; i++)
+        for (var i = 0; i < MaxHousingObjects; i++)
       {
         var oPtr = HousingModule->GetCurrentManager()->Objects[i];
         if (oPtr == 0)
