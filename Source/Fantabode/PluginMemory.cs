@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
+using HousingManager = FFXIVClientStructs.FFXIV.Client.Game.HousingManager;
 
 using Dalamud.Utility.Signatures;
 
@@ -17,6 +18,8 @@ namespace Fantabode
   {
     private bool isHousingOpen = false;
     private int inventoryType = 0;
+
+    private static unsafe HousingManager* HousingMgr => HousingManager.Instance();
 
     // Pointers to modify assembly to enable place anywhere.
     public IntPtr placeAnywhere;
@@ -237,11 +240,11 @@ namespace Fantabode
     /// <returns>Boolean state.</returns>
     public unsafe bool IsHousingOpen()
     {
-      if (HousingStructure == null)
+      var mgr = HousingMgr;
+      if (mgr == null)
         return false;
 
-      // Anything other than none means the housing menu is open.
-      return HousingStructure->Mode != HousingLayoutMode.None;
+      return mgr->IsInside() || mgr->IsOutside();
     }
 
     /// <summary>
@@ -252,6 +255,10 @@ namespace Fantabode
     {
       try
       {
+        var mgr = HousingMgr;
+        if (mgr == null || !mgr->HasHousePermissions() || (!mgr->IsInside() && !mgr->IsOutside()))
+          return false;
+
         if (HousingStructure == null)
           return false;
 
@@ -468,10 +475,17 @@ namespace Fantabode
     /// Sets the flag for place anywhere in memory.
     /// </summary>
     /// <param name="state">Boolean state for if you can place anywhere.</param>
-    public void SetPlaceAnywhere(bool state)
+    public unsafe void SetPlaceAnywhere(bool state)
     {
       if (placeAnywhere == IntPtr.Zero || wallAnywhere == IntPtr.Zero || wallmountAnywhere == IntPtr.Zero)
         return;
+
+      if (state)
+      {
+        var mgr = HousingMgr;
+        if (mgr == null || !mgr->HasHousePermissions() || (!mgr->IsInside() && !mgr->IsOutside()))
+          state = false;
+      }
 
       // The byte state from boolean.
       var bstate = (byte)(state ? 1 : 0);
