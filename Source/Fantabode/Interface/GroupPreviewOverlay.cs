@@ -36,13 +36,16 @@ namespace Fantabode.Interface
         if (!WorldToScreen(corners[i], vp, pos, size, out corners2d[i]))
           return;
       }
-
       var drawList = ImGui.GetWindowDrawList();
       uint col = ImGui.GetColorU32(new Vector4(1f, 1f, 0f, 1f));
-      void Line(int a, int b) => drawList.AddLine(corners2d[a], corners2d[b], col);
-      Line(0, 1); Line(1, 2); Line(2, 3); Line(3, 0);
-      Line(4, 5); Line(5, 6); Line(6, 7); Line(7, 4);
-      Line(0, 4); Line(1, 5); Line(2, 6); Line(3, 7);
+      ReadOnlySpan<int> edges = stackalloc int[]
+      {
+        0, 1, 1, 2, 2, 3, 3, 0,
+        4, 5, 5, 6, 6, 7, 7, 4,
+        0, 4, 1, 5, 2, 6, 3, 7,
+      };
+      for (int i = 0; i < edges.Length; i += 2)
+        drawList.AddLine(corners2d[edges[i]], corners2d[edges[i + 1]], col);
     }
 
     private static bool WorldToScreen(in Vector3 world, in Matrix4x4 vp, in Vector2 pos, in Vector2 size, out Vector2 screen)
