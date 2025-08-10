@@ -11,7 +11,7 @@ using CameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager
 
 using Dalamud.Utility.Signatures;
 
-namespace BDTHPlugin
+namespace Fantabode
 {
   public class PluginMemory
   {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace BDTHPlugin.Groups
+namespace Fantabode.Groups
 {
   public sealed class Group
   {

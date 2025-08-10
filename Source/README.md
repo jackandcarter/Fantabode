@@ -1,7 +1,7 @@
-# BDTHPlugin
+# Fantabode
 
 ## What is it?
-BDTHPlugin is a Dalamud plugin for FFXIV which gives you more control over placing housing items.
+Fantabode is a Dalamud plugin for FFXIV which gives you more control over placing housing items.
 
 ## What do I need to run it?
 First, you must use the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher) to run your game. The Quick Launcher allows for custom plugins to be installed to add new functionality to the game. To install, you first need to have the Quick Launcher setup for your game, instructions can be found on the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher) page.
@@ -12,7 +12,7 @@ First, you must use the [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQu
 ### **ONLY ASK FOR HELP FOR THIS PLUGIN FROM ME OR ON MY DISCORD SERVER**
 
 ## How do I use it?
-`/bdth` brings up the window to move items around. You **MUST** be in rotate mode for it to work.
+`/fantabode` brings up the window to move items around. You **MUST** be in rotate mode for it to work.
 
 Enabling the "Place Anywhere" checkbox will remove restrictions on placing items down for most cases.
 
@@ -24,10 +24,10 @@ Clicking on the image button will change the movement mode to world and local mo
 
 Click and drag on the boxes to change their values based on the drag input, alternatively, use the + and - buttons on the other inputs to adjust by the drag value as well. You can also enter numbers in here if you like by typing them.
 
-`/bdth list` opens a furnishing list used for indoors. Allows you to sort objects by distance to refine the list of items in item dense house.
+`/fantabode list` opens a furnishing list used for indoors. Allows you to sort objects by distance to refine the list of items in item dense house.
 
 ## FAQ
-Please check out the [FAQ](https://github.com/LeonBlade/BDTHPlugin/wiki/FAQ) page to see if your issue might be listed here.
+Please check out the [FAQ](https://github.com/LeonBlade/Fantabode/wiki/FAQ) page to see if your issue might be listed here.
 
 ## Final message
 Thank you for using my tool, I'm very grateful to everyone who uses my tools and I enjoy seeing what people do with them. If you wish to support me, you can do so at any of the links below. You can also join at the Discord to ask questions or share your creations.

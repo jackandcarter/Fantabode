@@ -2,10 +2,10 @@ using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
-using BDTHPlugin.Services;
-using BDTHPlugin.Groups;
+using Fantabode.Services;
+using Fantabode.Groups;
 
-namespace BDTHPlugin.Interface
+namespace Fantabode.Interface
 {
   public class Gizmo
   {
@@ -37,7 +37,7 @@ namespace BDTHPlugin.Interface
       ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
 
       const ImGuiWindowFlags windowFlags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoInputs;
-      if (!ImGui.Begin("BDTHGizmo", windowFlags))
+      if (!ImGui.Begin("FantabodeGizmo", windowFlags))
         return;
 
       Io = ImGui.GetIO();
@@ -75,7 +75,7 @@ namespace BDTHPlugin.Interface
       ImGuizmo.SetDrawlist();
 
       ImGuizmo.Enable(Memory.HousingStructure->Rotating);
-      ImGuizmo.SetID((int)ImGui.GetID("BDTHPlugin"));
+      ImGuizmo.SetID((int)ImGui.GetID("Fantabode"));
       ImGuizmo.SetOrthographic(false);
 
       ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);

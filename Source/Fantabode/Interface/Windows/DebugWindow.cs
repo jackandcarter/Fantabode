@@ -2,13 +2,13 @@
 
 using Dalamud.Bindings.ImGui;
 
-namespace BDTHPlugin.Interface.Windows
+namespace Fantabode.Interface.Windows
 {
   public class DebugWindow : Window
   {
     private static PluginMemory Memory => Plugin.GetMemory();
 
-    public DebugWindow() : base("BDTH Debug")
+    public DebugWindow() : base("Fantabode Debug")
     {
 
     }
