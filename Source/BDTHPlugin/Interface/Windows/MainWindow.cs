@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Numerics;
+using System.Collections.Generic;
 
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
@@ -8,6 +9,8 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 
 using BDTHPlugin.Interface.Components;
+using BDTHPlugin.Services;
+using BDTHPlugin.Groups;
 
 namespace BDTHPlugin.Interface.Windows
 {
@@ -15,11 +18,14 @@ namespace BDTHPlugin.Interface.Windows
   {
     private static PluginMemory Memory => Plugin.GetMemory();
     private static Configuration Configuration => Plugin.GetConfiguration();
+    private static GroupService Groups => Plugin.GetGroups();
 
     private static readonly Vector4 RED_COLOR = new(1, 0, 0, 1);
 
     private readonly Gizmo Gizmo;
     private readonly ItemControls ItemControls = new();
+    private readonly Dictionary<ulong, bool> _checked = new();
+    private Group.PivotMode pivot = Group.PivotMode.SelectionCenter;
 
     public bool Reset;
 
@@ -43,12 +49,29 @@ namespace BDTHPlugin.Interface.Windows
 
     public unsafe override void Draw()
     {
+      if (ImGui.BeginTabBar("bdth-main"))
+      {
+        if (ImGui.BeginTabItem("Controls"))
+        {
+          DrawControls();
+          ImGui.EndTabItem();
+        }
+        if (ImGui.BeginTabItem("Groups"))
+        {
+          DrawGroups();
+          ImGui.EndTabItem();
+        }
+        ImGui.EndTabBar();
+      }
+    }
+
+    private unsafe void DrawControls()
+    {
       ImGui.BeginGroup();
 
       var placeAnywhere = Configuration.PlaceAnywhere;
       if (ImGui.Checkbox("Place Anywhere", ref placeAnywhere))
       {
-        // Set the place anywhere based on the checkbox state.
         Memory.SetPlaceAnywhere(placeAnywhere);
         Configuration.PlaceAnywhere = placeAnywhere;
         Configuration.Save();
@@ -57,7 +80,6 @@ namespace BDTHPlugin.Interface.Windows
 
       ImGui.SameLine();
 
-      // Checkbox is clicked, set the configuration and save.
       var useGizmo = Configuration.UseGizmo;
       if (ImGui.Checkbox("Gizmo", ref useGizmo))
       {
@@ -68,7 +90,6 @@ namespace BDTHPlugin.Interface.Windows
 
       ImGui.SameLine();
 
-      // Checkbox is clicked, set the configuration and save.
       var doSnap = Configuration.DoSnap;
       if (ImGui.Checkbox("Snap", ref doSnap))
       {
@@ -84,7 +105,7 @@ namespace BDTHPlugin.Interface.Windows
       DrawTooltip(
       [
         $"Mode: {(Gizmo.Mode == ImGuizmoMode.Local ? "Local" : "World")}",
-        "Changes gizmo mode between local and world movement."
+        "Changes gizmo mode between local and world movement.",
       ]);
 
       ImGui.Separator();
@@ -103,7 +124,6 @@ namespace BDTHPlugin.Interface.Windows
 
       ImGui.Separator();
 
-      // Drag amount for the inputs.
       var drag = Configuration.Drag;
       if (ImGui.InputFloat("drag", ref drag, 0.05f))
       {
@@ -138,21 +158,18 @@ namespace BDTHPlugin.Interface.Windows
       DrawTooltip(
       [
         "Opens a furnishing list that you can use to sort by distance and click to select objects.",
-        "NOTE: Does not currently work outdoors!"
+        "NOTE: Does not currently work outdoors!",
       ]);
-      if (ImGui.Button("Open Group Window"))
-        Plugin.GetUi().Group.IsOpen = true;
       ImGui.SameLine();
       if (ImGui.Button("Apply Group"))
-        Plugin.GetGroups().StartApply();
+        Groups.StartApply();
       ImGui.SameLine();
       if (ImGui.Button("Cancel Preview"))
-        Plugin.GetGroups().Clear();
+        Groups.Clear();
 
-      var applyToGroup = Plugin.GetGroups().ApplyGizmoToGroup;
+      var applyToGroup = Groups.ApplyGizmoToGroup;
       if (ImGui.Checkbox("Gizmo → Group", ref applyToGroup))
-        Plugin.GetGroups().ApplyGizmoToGroup = applyToGroup;
-
+        Groups.ApplyGizmoToGroup = applyToGroup;
 
       var autoVisible = Configuration.AutoVisible;
       if (ImGui.Checkbox("Auto Open", ref autoVisible))
@@ -160,6 +177,87 @@ namespace BDTHPlugin.Interface.Windows
         Configuration.AutoVisible = autoVisible;
         Configuration.Save();
       }
+    }
+
+    private unsafe void DrawGroups()
+    {
+      ImGui.Text("Pivot:"); ImGui.SameLine();
+      if (ImGui.RadioButton("First", pivot == Group.PivotMode.FirstItem)) pivot = Group.PivotMode.FirstItem;
+      ImGui.SameLine();
+      if (ImGui.RadioButton("Center", pivot == Group.PivotMode.SelectionCenter)) pivot = Group.PivotMode.SelectionCenter;
+      ImGui.SameLine();
+      if (ImGui.RadioButton("Bounds", pivot == Group.PivotMode.BoundingBox)) pivot = Group.PivotMode.BoundingBox;
+
+      if (Plugin.ClientState.LocalPlayer == null)
+        return;
+
+      var playerPos = Plugin.ClientState.LocalPlayer.Position;
+      if (!Memory.GetFurnishings(out var items, playerPos, Plugin.GetConfiguration().SortByDistance))
+      {
+        ImGui.Text("No furnishings found.");
+      }
+      else
+      {
+        if (_checked.Count == 0 && Groups.Current != null)
+          foreach (var id in Groups.Current.ItemIds)
+            _checked[id] = true;
+
+        if (ImGui.BeginChild("grp_table", new Vector2(0, 300), true))
+        {
+          if (ImGui.BeginTable("grp", 3))
+          {
+            ImGui.TableSetupColumn("#", ImGuiTableColumnFlags.WidthFixed, 22);
+            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch, 0);
+            ImGui.TableSetupColumn("Sel", ImGuiTableColumnFlags.WidthFixed, 36);
+            for (int i = 0; i < items.Count; i++)
+            {
+              var itemId = (ulong)items[i].Item;
+              if (!_checked.ContainsKey(itemId))
+                _checked[itemId] = Groups.Current?.ItemIds.Contains(itemId) ?? false;
+
+              ImGui.TableNextRow();
+              ImGui.TableNextColumn();
+              ImGui.TextUnformatted((i + 1).ToString());
+
+              ImGui.TableNextColumn();
+              var name = ""; ushort icon = 0;
+              if (Plugin.TryGetYardObject(items[i].HousingRowId, out var yard)) { name = yard.Item.Value.Name.ToString(); icon = yard.Item.Value.Icon; }
+              if (Plugin.TryGetFurnishing(items[i].HousingRowId, out var furn)) { name = furn.Item.Value.Name.ToString(); icon = furn.Item.Value.Icon; }
+              if (icon != 0) { Plugin.DrawIcon(icon, new Vector2(18,18)); ImGui.SameLine(); }
+              ImGui.TextUnformatted(name == string.Empty ? $"(Row {items[i].HousingRowId})" : name);
+
+              ImGui.TableNextColumn();
+              var flag = _checked[itemId];
+              if (ImGui.Checkbox($"##sel{i}", ref flag)) _checked[itemId] = flag;
+            }
+            ImGui.EndTable();
+          }
+          ImGui.EndChild();
+        }
+      }
+
+      if (ImGui.Button("Create/Update group"))
+      {
+        var ids = new List<ulong>();
+        foreach (var kv in _checked) if (kv.Value) ids.Add(kv.Key);
+        Groups.CaptureFromSelection(ids, pivot);
+        Groups.ApplyGizmoToGroup = true;
+      }
+      ImGui.SameLine();
+      if (ImGui.Button("Clear"))
+      {
+        Groups.Clear();
+        _checked.Clear();
+      }
+      if (ImGui.Button("Apply Group")) Groups.StartApply();
+      ImGui.SameLine();
+      if (ImGui.Button("Cancel Preview")) Groups.Clear();
+      var apply = Groups.ApplyGizmoToGroup;
+      if (ImGui.Checkbox("Gizmo → Group", ref apply)) Groups.ApplyGizmoToGroup = apply;
+
+      var status = Groups.Current == null ? "none" : "active";
+      var count = Groups.Current?.ItemIds.Count ?? 0;
+      ImGui.Text($"Current group: {status} ({count} items)");
     }
 
     private static void DrawTooltip(string[] text)
