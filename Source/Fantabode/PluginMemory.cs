@@ -198,7 +198,16 @@ namespace Fantabode
         var config = Plugin.GetConfiguration();
 
         if (config.PlaceAnywhere)
-          SetPlaceAnywhere(Plugin.GetConfiguration().PlaceAnywhere);
+        {
+          unsafe
+          {
+            var mgr = HousingMgr;
+            if (mgr != null && mgr->HasHousePermissions())
+              SetPlaceAnywhere(Plugin.GetConfiguration().PlaceAnywhere);
+            else
+              Plugin.Chat.PrintError("No housing permissions");
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -222,7 +231,9 @@ namespace Fantabode
       try
       {
         // Disable the place anywhere in case it's on.
-        SetPlaceAnywhere(false);
+        var mgr = HousingMgr;
+        if (mgr != null && mgr->HasHousePermissions())
+          SetPlaceAnywhere(false);
 
                 // Enable the housing goods menu again.
                 if (HousingGoods != null) ;// HousingGoods->IsVisible = true;//same as above, this value is read only with dalamud 13

@@ -78,14 +78,21 @@ namespace Fantabode.Interface.Windows
         DrawError("No housing permissions");
       ImGui.BeginDisabled(!hasPerms);
 
-      var placeAnywhere = Configuration.PlaceAnywhere;
-      if (ImGui.Checkbox("Place Anywhere", ref placeAnywhere))
-      {
-        Memory.SetPlaceAnywhere(placeAnywhere);
-        Configuration.PlaceAnywhere = placeAnywhere;
-        Configuration.Save();
-      }
-      DrawTooltip("Allows the placement of objects without limitation from the game engine.");
+        var placeAnywhere = Configuration.PlaceAnywhere;
+        if (ImGui.Checkbox("Place Anywhere", ref placeAnywhere))
+        {
+          if (hasPerms)
+          {
+            Memory.SetPlaceAnywhere(placeAnywhere);
+            Configuration.PlaceAnywhere = placeAnywhere;
+            Configuration.Save();
+          }
+          else
+          {
+            Plugin.Chat.PrintError("No housing permissions");
+          }
+        }
+        DrawTooltip("Allows the placement of objects without limitation from the game engine.");
 
       ImGui.SameLine();
 
